@@ -9,7 +9,7 @@ interface ChordProps {
 export function ChordChart({ name, frets }: ChordProps) {
   const audioContextRef = useRef<AudioContext | null>(null);
 
-  const playString = (stringIndex: number, fret: number) => {
+  const playString = (stringIndex: number, fret: number, timeOffset: number = 0) => {
     if (fret === -1) return; // Muted
 
     if (!audioContextRef.current) {
@@ -20,26 +20,80 @@ export function ChordChart({ name, frets }: ChordProps) {
     }
 
     const ctx = audioContextRef.current;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
+    
     // Standard tuning frequencies (E2, A2, D3, G3, B3, E4)
     const baseFreqs = [82.41, 110.00, 146.83, 196.00, 246.94, 329.63];
-    // Calculate frequency based on fret
     const freq = baseFreqs[stringIndex] * Math.pow(2, fret / 12);
+    
+    // Karplus-Strong Algorithm Implementation
+    const duration = 2.0; // Seconds
+    const sampleRate = ctx.sampleRate;
+    const length = sampleRate * duration;
+    const buffer = ctx.createBuffer(1, length, sampleRate);
+    const data = buffer.getChannelData(0);
+    
+    // 1. Create a noise burst (excitation)
+    // The period (N) corresponds to the wavelength of the fundamental frequency
+    const period = Math.round(sampleRate / freq);
+    for (let i = 0; i < period; i++) {
+      // White noise burst
+      data[i] = (Math.random() * 2 - 1);
+    }
+    
+    // 2. Apply feedback loop (decay)
+    // y[n] = 0.5 * (y[n-N] + y[n-N-1]) * decayFactor
+    // To make it sound more like acoustic guitar (brighter start, metallic fade), 
+    // we can use a slightly higher decay factor.
+    // Low E string decays slower than High E.
+    let decay = 0.99;
+    // Adjust decay based on string thickness/frequency (lower strings sustain longer)
+    if (stringIndex < 3) decay = 0.996; 
+    
+    for (let i = period; i < length; i++) {
+      // Simple averaging filter (Lowpass)
+      const prevSample = data[i - period];
+      const prevPrevSample = data[i - period - 1] || 0; // Handle boundary case to avoid NaN
+      const val = 0.5 * (prevSample + prevPrevSample);
+      data[i] = val * decay;
+    }
+    
+    // 3. Play the buffer
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    
+    // Connect to a gain node to control overall volume and prevent clipping
+    const gain = ctx.createGain();
+    gain.gain.value = 0.5; // Master volume for this note
+    
+    // Optional: Add a simple Highpass filter to remove muddy low frequencies (body resonance simulation)
+    const bodyFilter = ctx.createBiquadFilter();
+    bodyFilter.type = 'highpass';
+    bodyFilter.frequency.value = 100;
 
-    osc.frequency.value = freq;
-    osc.type = 'triangle'; // Softer sound
-
-    gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
-
-    osc.connect(gain);
+    source.connect(bodyFilter);
+    bodyFilter.connect(gain);
     gain.connect(ctx.destination);
+    
+    source.start(ctx.currentTime + timeOffset);
+  };
 
-    osc.start();
-    osc.stop(ctx.currentTime + 1.5);
+  const playChord = () => {
+    // Initialize context first to ensure we have a valid currentTime base
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    if (audioContextRef.current.state === 'suspended') {
+      audioContextRef.current.resume();
+    }
+
+    let delay = 0;
+    // Strum from Low E (index 0) to High E (index 5)
+    frets.forEach((fret, index) => {
+      if (fret !== -1) {
+        playString(index, fret, delay);
+        delay += 0.05; // 50ms strumming interval
+      }
+    });
   };
 
   return (
@@ -79,7 +133,16 @@ export function ChordChart({ name, frets }: ChordProps) {
             if (fret === 0) {
               // Open circle
               return (
-                <circle key={stringIndex} cx={x} cy="12" r="3" fill="none" stroke="black" />
+                <circle 
+                  key={stringIndex} 
+                  cx={x} 
+                  cy="12" 
+                  r="3" 
+                  fill="none" 
+                  stroke="black"
+                  onClick={() => playString(stringIndex, 0)}
+                  className="cursor-pointer hover:stroke-indigo-600 hover:stroke-2" 
+                />
               );
             }
             // Fret dot
@@ -97,7 +160,12 @@ export function ChordChart({ name, frets }: ChordProps) {
           })}
         </svg>
       </div>
-      <p className="text-xs text-slate-500 mt-2">点击黑点试听</p>
+      <p 
+        className="text-xs text-slate-500 mt-2 cursor-pointer hover:text-indigo-600 transition-colors"
+        onClick={playChord}
+      >
+        点击此处试听扫弦
+      </p>
     </div>
   );
 }

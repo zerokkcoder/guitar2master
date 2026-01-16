@@ -1,5 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, PlayCircle, BookOpen } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { courses } from '../lib/data';
 
 export function CourseDetail() {
@@ -45,10 +47,10 @@ export function CourseDetail() {
 
           <div>
             <h1 className="text-3xl font-bold text-slate-900 mb-4">{course.title}</h1>
-            <div className="prose prose-slate max-w-none">
-               <div className="whitespace-pre-line text-slate-600">
-                 {course.content}
-               </div>
+            <div className="prose prose-slate max-w-none prose-a:text-indigo-600 hover:prose-a:text-indigo-500">
+               <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                 {course.content || '暂无内容'}
+               </ReactMarkdown>
             </div>
           </div>
         </div>
