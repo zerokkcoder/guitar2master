@@ -25,6 +25,20 @@ export function Tuner() {
   const mediaStreamSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const rafIdRef = useRef<number | null>(null);
 
+  const stopListening = () => {
+    if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+    if (mediaStreamSourceRef.current) {
+      mediaStreamSourceRef.current.disconnect();
+      mediaStreamSourceRef.current.mediaStream.getTracks().forEach(track => track.stop());
+    }
+    if (audioContextRef.current) audioContextRef.current.close();
+    
+    setIsListening(false);
+    setFrequency(0);
+    setNote('-');
+    setCents(0);
+  };
+
   useEffect(() => {
     return () => {
       stopListening();
@@ -34,6 +48,7 @@ export function Tuner() {
   const startListening = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       analyserRef.current = audioContextRef.current.createAnalyser();
       analyserRef.current.fftSize = 2048;
@@ -49,19 +64,7 @@ export function Tuner() {
     }
   };
 
-  const stopListening = () => {
-    if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
-    if (mediaStreamSourceRef.current) {
-      mediaStreamSourceRef.current.disconnect();
-      mediaStreamSourceRef.current.mediaStream.getTracks().forEach(track => track.stop());
-    }
-    if (audioContextRef.current) audioContextRef.current.close();
-    
-    setIsListening(false);
-    setFrequency(0);
-    setNote('-');
-    setCents(0);
-  };
+
 
   // Autocorrelation algorithm
   const autoCorrelate = (buf: Float32Array, sampleRate: number) => {

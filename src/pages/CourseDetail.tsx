@@ -70,7 +70,7 @@ export function CourseDetail() {
                   className="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-medium flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
+                    <span className="shrink-0 w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-medium flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
                       {index + 1}
                     </span>
                     <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">

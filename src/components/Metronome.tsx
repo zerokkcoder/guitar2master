@@ -61,6 +61,7 @@ export function Metronome() {
       setIsPlaying(false);
     } else {
       if (!audioContextRef.current) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
       if (audioContextRef.current.state === 'suspended') {

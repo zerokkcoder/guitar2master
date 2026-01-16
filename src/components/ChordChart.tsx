@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 
 interface ChordProps {
   name: string;
@@ -9,10 +9,11 @@ interface ChordProps {
 export function ChordChart({ name, frets }: ChordProps) {
   const audioContextRef = useRef<AudioContext | null>(null);
 
-  const playString = (stringIndex: number, fret: number, timeOffset: number = 0) => {
+  const playString = useCallback((stringIndex: number, fret: number, timeOffset: number = 0) => {
     if (fret === -1) return; // Muted
 
     if (!audioContextRef.current) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
     if (audioContextRef.current.state === 'suspended') {
@@ -75,11 +76,12 @@ export function ChordChart({ name, frets }: ChordProps) {
     gain.connect(ctx.destination);
     
     source.start(ctx.currentTime + timeOffset);
-  };
+  }, []);
 
-  const playChord = () => {
+  const playChord = useCallback(() => {
     // Initialize context first to ensure we have a valid currentTime base
     if (!audioContextRef.current) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
     if (audioContextRef.current.state === 'suspended') {
@@ -94,7 +96,7 @@ export function ChordChart({ name, frets }: ChordProps) {
         delay += 0.05; // 50ms strumming interval
       }
     });
-  };
+  }, [playString, frets]);
 
   return (
     <div className="flex flex-col items-center p-4 bg-white rounded-lg">
