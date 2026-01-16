@@ -1,8 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff } from 'lucide-react';
 import { cn } from '../lib/utils';
-
-const NOTE_STRINGS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+import { usePitchDetector } from '../hooks/usePitchDetector';
 
 // Standard Guitar Tuning frequencies for reference
 // E2=82.41, A2=110.00, D3=146.83, G3=196.00, B3=246.94, E4=329.63
@@ -16,129 +14,7 @@ const GUITAR_STRINGS = [
 ];
 
 export function Tuner() {
-  const [isListening, setIsListening] = useState(false);
-  const [frequency, setFrequency] = useState<number>(0);
-  const [note, setNote] = useState<string>('-');
-  const [cents, setCents] = useState<number>(0);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const mediaStreamSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  const rafIdRef = useRef<number | null>(null);
-
-  const stopListening = () => {
-    if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
-    if (mediaStreamSourceRef.current) {
-      mediaStreamSourceRef.current.disconnect();
-      mediaStreamSourceRef.current.mediaStream.getTracks().forEach(track => track.stop());
-    }
-    if (audioContextRef.current) audioContextRef.current.close();
-    
-    setIsListening(false);
-    setFrequency(0);
-    setNote('-');
-    setCents(0);
-  };
-
-  useEffect(() => {
-    return () => {
-      stopListening();
-    };
-  }, []);
-
-  const startListening = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      analyserRef.current.fftSize = 2048;
-      
-      mediaStreamSourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
-      mediaStreamSourceRef.current.connect(analyserRef.current);
-      
-      setIsListening(true);
-      updatePitch();
-    } catch (err) {
-      console.error("Error accessing microphone:", err);
-      alert("无法访问麦克风，请检查权限设置。");
-    }
-  };
-
-
-
-  // Autocorrelation algorithm
-  const autoCorrelate = (buf: Float32Array, sampleRate: number) => {
-    // Implements the McLeod Pitch Method (simplified)
-    const SIZE = buf.length;
-    const MAX_SAMPLES = Math.floor(SIZE / 2);
-    let bestOffset = -1;
-    let bestCorrelation = 0;
-    let rms = 0;
-    let foundGoodCorrelation = false;
-    const correlations = new Array(MAX_SAMPLES).fill(0);
-
-    for (let i = 0; i < SIZE; i++) {
-      const val = buf[i];
-      rms += val * val;
-    }
-    rms = Math.sqrt(rms / SIZE);
-
-    if (rms < 0.01) return -1; // Not enough signal
-
-    let lastCorrelation = 1;
-    for (let offset = 0; offset < MAX_SAMPLES; offset++) {
-      let correlation = 0;
-
-      for (let i = 0; i < MAX_SAMPLES; i++) {
-        correlation += Math.abs(buf[i] - buf[i + offset]);
-      }
-      
-      correlation = 1 - (correlation / MAX_SAMPLES);
-      correlations[offset] = correlation;
-
-      if ((correlation > 0.9) && (correlation > lastCorrelation)) {
-        foundGoodCorrelation = true;
-        if (correlation > bestCorrelation) {
-          bestCorrelation = correlation;
-          bestOffset = offset;
-        }
-      } else if (foundGoodCorrelation) {
-        // Shift exact peak
-        const shift = (correlations[bestOffset + 1] - correlations[bestOffset - 1]) / 2;
-        return sampleRate / (bestOffset + shift);
-      }
-      lastCorrelation = correlation;
-    }
-    
-    if (bestCorrelation > 0.01) {
-      return sampleRate / bestOffset;
-    }
-    return -1;
-  };
-
-  const updatePitch = () => {
-    if (!analyserRef.current || !audioContextRef.current) return;
-    
-    const buf = new Float32Array(analyserRef.current.fftSize);
-    analyserRef.current.getFloatTimeDomainData(buf);
-    
-    const ac = autoCorrelate(buf, audioContextRef.current.sampleRate);
-
-    if (ac !== -1) {
-      const noteNum = 12 * (Math.log(ac / 440) / Math.log(2)) + 69;
-      const noteInt = Math.round(noteNum);
-      const noteName = NOTE_STRINGS[noteInt % 12];
-      
-      // Calculate detune in cents
-      const detune = Math.floor(1200 * (Math.log(ac / (440 * Math.pow(2, (noteInt - 69) / 12))) / Math.log(2)));
-      
-      setFrequency(Math.round(ac));
-      setNote(noteName);
-      setCents(detune);
-    }
-
-    rafIdRef.current = requestAnimationFrame(updatePitch);
-  };
+  const { isListening, startListening, stopListening, frequency, note, cents } = usePitchDetector();
 
   const getTunerStatus = (cents: number) => {
     if (Math.abs(cents) < 5) return 'tuned';
@@ -203,21 +79,21 @@ export function Tuner() {
         ) : (
           <>
             <Mic className="w-5 h-5 mr-2" />
-            开启麦克风
+            开始调音
           </>
         )}
       </button>
 
-      <div className="mt-8 w-full">
-         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 text-center">标准音高参考</h4>
-         <div className="grid grid-cols-6 gap-2">
-            {GUITAR_STRINGS.map((s, i) => (
-              <div key={i} className="text-center p-2 bg-slate-50 rounded border border-slate-100">
-                <div className="font-bold text-slate-700">{s.note}</div>
-                <div className="text-[10px] text-slate-400">{s.freq}</div>
-              </div>
-            ))}
-         </div>
+      <div className="mt-6 w-full">
+        <h4 className="text-sm font-medium text-slate-500 mb-3 uppercase tracking-wider">标准音参考</h4>
+        <div className="grid grid-cols-6 gap-2">
+          {GUITAR_STRINGS.map((string, index) => (
+            <div key={index} className="flex flex-col items-center p-2 rounded bg-slate-50 border border-slate-100">
+              <span className="text-lg font-bold text-slate-700">{string.note}</span>
+              <span className="text-xs text-slate-400">{string.octave}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

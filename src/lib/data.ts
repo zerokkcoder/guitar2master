@@ -1,3 +1,17 @@
+export interface PracticeNote {
+  note: string;
+  midi: number;
+  duration: number;
+  hint: string;
+}
+
+export interface PracticeExercise {
+  id: string;
+  title: string;
+  description: string;
+  notes: PracticeNote[];
+}
+
 export interface Course {
   id: number;
   title: string;
@@ -8,6 +22,7 @@ export interface Course {
   image: string;
   content?: string; // Markdown content
   syllabus?: { title: string; duration: string }[];
+  practice?: PracticeExercise[];
 }
 
 export const courses: Course[] = [
@@ -77,6 +92,21 @@ export const courses: Course[] = [
       { title: '认识吉他构造', duration: '10:00' },
       { title: '琴弦与调音', duration: '20:00' },
       { title: '持琴姿势', duration: '15:00' },
+    ],
+    practice: [
+      {
+        id: 'p1-1',
+        title: '空弦音跟练',
+        description: '请依次弹奏6弦到1弦的空弦音，系统将检测您的音准。',
+        notes: [
+          { note: 'E', midi: 40, duration: 0, hint: '6弦 (最粗)' },
+          { note: 'A', midi: 45, duration: 0, hint: '5弦' },
+          { note: 'D', midi: 50, duration: 0, hint: '4弦' },
+          { note: 'G', midi: 55, duration: 0, hint: '3弦' },
+          { note: 'B', midi: 59, duration: 0, hint: '2弦' },
+          { note: 'E', midi: 64, duration: 0, hint: '1弦 (最细)' },
+        ]
+      }
     ]
   },
   {

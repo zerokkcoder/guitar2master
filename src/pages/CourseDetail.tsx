@@ -3,6 +3,7 @@ import { ArrowLeft, Clock, PlayCircle, BookOpen } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { courses } from '../lib/data';
+import { PracticeMode } from '../components/PracticeMode';
 
 export function CourseDetail() {
   const { id } = useParams();
@@ -47,11 +48,26 @@ export function CourseDetail() {
 
           <div>
             <h1 className="text-3xl font-bold text-slate-900 mb-4">{course.title}</h1>
-            <div className="prose prose-slate max-w-none prose-a:text-indigo-600 hover:prose-a:text-indigo-500">
+            <div className="prose prose-slate max-w-none prose-a:text-indigo-600 hover:prose-a:text-indigo-500 mb-12">
                <ReactMarkdown remarkPlugins={[remarkGfm]}>
                  {course.content || '暂无内容'}
                </ReactMarkdown>
             </div>
+
+            {/* Practice Mode Section */}
+            {course.practice && course.practice.length > 0 && (
+              <div className="border-t border-slate-200 pt-8">
+                <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
+                  <span className="bg-indigo-600 w-2 h-8 rounded-full mr-3"></span>
+                  实战跟练
+                </h2>
+                <div className="space-y-8">
+                  {course.practice.map((exercise) => (
+                    <PracticeMode key={exercise.id} exercise={exercise} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
