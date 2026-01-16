@@ -99,9 +99,9 @@ export function ChordChart({ name, frets }: ChordProps) {
   }, [playString, frets]);
 
   return (
-    <div className="flex flex-col items-center p-4 bg-white rounded-lg">
-      <h3 className="text-xl font-bold mb-2">{name}</h3>
-      <div className="relative w-40 h-48 select-none">
+    <div className="flex flex-col items-center w-full p-2 bg-white rounded-lg">
+      <h3 className="text-base font-bold mb-2 whitespace-nowrap">{name}</h3>
+      <div className="relative w-full h-48 select-none">
         <svg viewBox="0 0 100 120" className="w-full h-full">
           {/* Frets (horizontal lines) */}
           <line x1="10" y1="20" x2="90" y2="20" stroke="black" strokeWidth="2" /> {/* Nut */}
@@ -166,7 +166,7 @@ export function ChordChart({ name, frets }: ChordProps) {
         className="text-xs text-slate-500 mt-2 cursor-pointer hover:text-indigo-600 transition-colors"
         onClick={playChord}
       >
-        点击此处试听扫弦
+        点击试听和弦
       </p>
     </div>
   );

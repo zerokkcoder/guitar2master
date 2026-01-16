@@ -104,7 +104,7 @@ export function PracticeMode({ exercise }: PracticeModeProps) {
             <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/30">
               <CheckCircle2 className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-3xl font-bold mb-2">练习完成!</h2>
+            <h2 className="text-3xl font-bold mb-2">练习完成！</h2>
             <p className="text-slate-400 mb-8">你已经成功完成了所有音符的跟练。</p>
             <button
               onClick={handleRestart}
@@ -156,19 +156,19 @@ export function PracticeMode({ exercise }: PracticeModeProps) {
               {feedback === 'perfect' && (
                 <div className="flex items-center text-green-400 font-bold text-xl animate-bounce">
                   <CheckCircle2 className="w-6 h-6 mr-2" />
-                  完美! 保持住...
+                  完美！保持住...
                 </div>
               )}
               {feedback === 'flat' && (
                 <div className="flex items-center text-red-400 font-bold text-lg">
                   <ArrowUp className="w-6 h-6 mr-2" />
-                  偏低了 (Flat)
+                  音偏低了
                 </div>
               )}
               {feedback === 'sharp' && (
                 <div className="flex items-center text-red-400 font-bold text-lg">
                   <ArrowDown className="w-6 h-6 mr-2" />
-                  偏高了 (Sharp)
+                  音偏高了
                 </div>
               )}
             </div>

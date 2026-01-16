@@ -78,19 +78,17 @@ export function Metronome() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 max-w-sm mx-auto text-center">
-      <h3 className="text-xl font-bold text-slate-900 mb-6">节拍器</h3>
-      
-      <div className="mb-8">
-        <div className="text-6xl font-black text-indigo-600 tabular-nums">{bpm}</div>
-        <div className="text-slate-500 text-sm mt-2">BPM</div>
+    <div className="flex flex-col items-center justify-center py-8">
+      <div className="mb-10">
+        <div className="text-8xl font-black text-indigo-600 tabular-nums tracking-tighter leading-none">{bpm}</div>
+        <div className="text-slate-400 font-black text-xs uppercase tracking-[0.3em] mt-4">每分钟节拍 (BPM)</div>
       </div>
 
-      <div className="flex items-center justify-center gap-6 mb-8">
+      <div className="flex items-center justify-center gap-8 mb-10">
         <button
           onClick={() => changeBpm(-5)}
-          className="p-3 rounded-full hover:bg-slate-100 text-slate-600 transition-colors"
-          aria-label="Decrease BPM"
+          className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all active:scale-90"
+          aria-label="减小 BPM"
         >
           <Minus className="w-6 h-6" />
         </button>
@@ -98,32 +96,38 @@ export function Metronome() {
         <button
           onClick={togglePlay}
           className={cn(
-            "w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-lg",
+            "w-20 h-20 rounded-3xl flex items-center justify-center transition-all shadow-2xl shadow-indigo-200/50",
             isPlaying 
-              ? "bg-red-500 hover:bg-red-600 text-white" 
+              ? "bg-rose-500 hover:bg-rose-600 text-white" 
               : "bg-indigo-600 hover:bg-indigo-700 text-white"
           )}
         >
-          {isPlaying ? <Square className="w-6 h-6 fill-current" /> : <Play className="w-8 h-8 ml-1 fill-current" />}
+          {isPlaying ? <Square className="w-8 h-8 fill-current" /> : <Play className="w-10 h-10 ml-1 fill-current" />}
         </button>
 
         <button
           onClick={() => changeBpm(5)}
-          className="p-3 rounded-full hover:bg-slate-100 text-slate-600 transition-colors"
-          aria-label="Increase BPM"
+          className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all active:scale-90"
+          aria-label="增加 BPM"
         >
           <Plus className="w-6 h-6" />
         </button>
       </div>
       
-      <input
-        type="range"
-        min="30"
-        max="300"
-        value={bpm}
-        onChange={(e) => setBpm(parseInt(e.target.value))}
-        className="w-full accent-indigo-600"
-      />
+      <div className="w-full max-w-xs px-4">
+        <input
+          type="range"
+          min="30"
+          max="300"
+          value={bpm}
+          onChange={(e) => setBpm(parseInt(e.target.value))}
+          className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+        />
+        <div className="flex justify-between mt-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <span>30 bpm</span>
+          <span>300 bpm</span>
+        </div>
+      </div>
     </div>
   );
 }
