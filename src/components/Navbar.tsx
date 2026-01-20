@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Guitar, Map, Wrench, Home, User, Bell, Music, Trophy } from 'lucide-react';
+import { Guitar, Map, Wrench, Home, Music, Trophy } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useState, useEffect } from 'react';
 import { useProgress } from '../hooks/useProgress';
@@ -80,11 +80,6 @@ export function Navbar() {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-            </button>
-            <div className="h-8 w-px bg-slate-200 mx-2"></div>
             <Link href="/courses" className="flex items-center gap-3 pl-1 pr-4 py-1 bg-white border border-slate-200 rounded-full hover:shadow-md transition-all group">
               <div className="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
                 <Trophy className="w-4 h-4 text-indigo-600" />
