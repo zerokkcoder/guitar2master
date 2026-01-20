@@ -1,15 +1,22 @@
+'use client';
+
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from 'react';
 import { Mic, MicOff, CheckCircle2, ArrowUp, ArrowDown, RefreshCcw } from 'lucide-react';
 import { usePitchDetector } from '../hooks/usePitchDetector';
 import type { PracticeExercise } from '../lib/data';
+import { useProgress } from '../hooks/useProgress';
 
 interface PracticeModeProps {
   exercise: PracticeExercise;
+  courseId: number;
+  levelId: string;
+  xpReward: number;
 }
 
-export function PracticeMode({ exercise }: PracticeModeProps) {
+export function PracticeMode({ exercise, courseId, levelId, xpReward }: PracticeModeProps) {
   const { isListening, startListening, stopListening, midiNote, cents } = usePitchDetector();
+  const { completeLevel } = useProgress();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const [feedback, setFeedback] = useState<'waiting' | 'perfect' | 'flat' | 'sharp'>('waiting');
@@ -63,6 +70,8 @@ export function PracticeMode({ exercise }: PracticeModeProps) {
         // All notes completed
         setIsCompleted(true);
         stopListening();
+        // 记录完成进度并增加 XP
+        completeLevel(courseId, levelId, xpReward);
       }
     }
   }, [consecutiveMatches, currentIndex, exercise.notes.length, stopListening]);

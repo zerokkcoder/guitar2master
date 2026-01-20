@@ -129,19 +129,19 @@ export default async function CourseDetailPage({
                       // Next.js 中静态资源路径优化
                       const resolvedSrc = `/docs/images/${fileName}`;
                       return (
-                        <div className="my-12 group">
+                        <span className="block my-12 group">
                           <img 
                             src={resolvedSrc} 
                             alt={alt || ''} 
                             className="rounded-3xl shadow-2xl border border-slate-100 mx-auto transition-transform duration-700 group-hover:scale-[1.02]"
                           />
-                          {alt && <p className="text-center text-sm text-slate-400 mt-4 font-medium italic">{alt}</p>}
-                        </div>
+                          {alt && <span className="block text-center text-sm text-slate-400 mt-4 font-medium italic">{alt}</span>}
+                        </span>
                       );
                     },
                     h2: ({ children }) => (
                       <h2 className="flex items-center gap-3">
-                        <div className="w-1.5 h-8 bg-indigo-500 rounded-full" />
+                        <span className="block w-1.5 h-8 bg-indigo-500 rounded-full" />
                         {children}
                       </h2>
                     )
@@ -177,7 +177,12 @@ export default async function CourseDetailPage({
                         <span className="text-indigo-400 font-black text-[10px] uppercase tracking-[0.3em]">挑战模式</span>
                         <h3 className="text-2xl font-black text-white mt-2">{exercise.title}</h3>
                       </div>
-                      <PracticeMode exercise={exercise} />
+                      <PracticeMode 
+                        exercise={exercise} 
+                        courseId={course.id}
+                        levelId={activeLevelId || ''}
+                        xpReward={Math.round(course.xpReward / course.lessons)} 
+                      />
                     </div>
                   </div>
                 ))}

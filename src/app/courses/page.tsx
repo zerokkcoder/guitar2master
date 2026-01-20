@@ -1,9 +1,10 @@
 'use client';
 
 import { memo } from 'react';
-import { Clock, Trophy, ChevronRight, Star, Target, Map } from 'lucide-react';
+import { Clock, Trophy, ChevronRight, Star, Target, Map, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { courses, Course } from '@/lib/data';
+import { useProgress } from '@/hooks/useProgress';
 
 /**
  * 难度星级组件 - 抽离以减少不必要的重渲染
@@ -29,12 +30,26 @@ DifficultyStars.displayName = 'DifficultyStars';
  * 2. 移除 backdrop-blur
  * 3. 使用 will-change 优化渲染
  */
-const CourseCard = memo(({ course, stars, isLastWorld }: { course: Course, stars: number, isLastWorld: boolean }) => (
+const CourseCard = memo(({ course, stars, isLastWorld, completedLessons, totalLessons }: { 
+  course: Course, 
+  stars: number, 
+  isLastWorld: boolean,
+  completedLessons: number,
+  totalLessons: number
+}) => (
   <div className="w-full md:w-[30%] group relative will-change-transform flex flex-col">
     {/* 节点标记 */}
     <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 hidden md:block">
-      <div className="w-6 h-6 bg-white rounded-full border-4 border-indigo-500 shadow-sm group-hover:border-indigo-600 transition-all duration-300 flex items-center justify-center">
-        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+      <div className={`w-6 h-6 rounded-full border-4 shadow-sm transition-all duration-300 flex items-center justify-center ${
+        completedLessons === totalLessons 
+          ? 'bg-green-500 border-green-200' 
+          : 'bg-white border-indigo-500 group-hover:border-indigo-600'
+      }`}>
+        {completedLessons === totalLessons ? (
+          <CheckCircle2 className="w-3 h-3 text-white" />
+        ) : (
+          <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+        )}
       </div>
     </div>
     
@@ -109,7 +124,7 @@ CourseCard.displayName = 'CourseCard';
  * 探索地图页面组件
  */
 export default function CoursesPage() {
-  const totalXP = courses.reduce((acc: number, c) => acc + (c.xpReward || 0), 0);
+  const { totalXP, completedLevels, isLoaded } = useProgress();
 
   const getDifficultyStars = (level: string) => {
     switch (level) {
@@ -188,6 +203,12 @@ export default function CoursesPage() {
                 {row.map((course) => {
                   const stars = getDifficultyStars(course.level);
                   const isLastWorld = course.id === 6;
+                  
+                  // 计算该课程完成的关卡数
+                  const courseCompletedLevels = course.syllabus?.filter(s => 
+                    completedLevels.includes(`${course.id}-${s.levelId}`)
+                  ).length || 0;
+                  const totalLessons = course.syllabus?.length || 0;
 
                   return (
                     <CourseCard 
@@ -195,6 +216,8 @@ export default function CoursesPage() {
                       course={course}
                       stars={stars}
                       isLastWorld={isLastWorld}
+                      completedLessons={courseCompletedLevels}
+                      totalLessons={totalLessons}
                     />
                   );
                 })}

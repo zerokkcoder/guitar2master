@@ -2,18 +2,18 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Guitar, Map, Wrench, Home, User, Bell, Music } from 'lucide-react';
+import { Guitar, Map, Wrench, Home, User, Bell, Music, Trophy } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useState, useEffect } from 'react';
+import { useProgress } from '../hooks/useProgress';
 
 /**
  * 导航栏组件
- * 提供全局页面跳转，并根据当前路径高亮对应项
- * 采用半透明毛玻璃效果和更现代的交互设计
  */
 export function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
+  const { totalXP, isLoaded } = useProgress();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -85,12 +85,15 @@ export function Navbar() {
               <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
             </button>
             <div className="h-8 w-px bg-slate-200 mx-2"></div>
-            <button className="flex items-center gap-3 pl-1 pr-4 py-1 bg-white border border-slate-200 rounded-full hover:shadow-md transition-all group">
-              <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
-                <User className="w-4 h-4 text-slate-500 group-hover:text-indigo-600" />
+            <Link href="/courses" className="flex items-center gap-3 pl-1 pr-4 py-1 bg-white border border-slate-200 rounded-full hover:shadow-md transition-all group">
+              <div className="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                <Trophy className="w-4 h-4 text-indigo-600" />
               </div>
-              <span className="text-sm font-bold text-slate-700">我的进度</span>
-            </button>
+              <div className="flex flex-col items-start">
+                <span className="text-[10px] font-black text-indigo-500 uppercase leading-none mb-0.5">总经验值</span>
+                <span className="text-sm font-black text-slate-900 leading-none tabular-nums">{isLoaded ? totalXP : '--'} XP</span>
+              </div>
+            </Link>
           </div>
         </div>
       </div>
