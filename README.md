@@ -1,73 +1,73 @@
-# React + TypeScript + Vite
+# 🎸 吉他大师 (Guitar Master) - 从零到大师
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+致力于打造最科学、最有趣的吉他自学平台。通过游戏化的关卡设计和实时音频识别技术，带你开启一场史诗级的音乐冒险之旅。
 
-Currently, two official plugins are available:
+## 🚀 项目概览
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+本项目已从 Vite 迁移至 **Next.js 15 (App Router)** 架构，旨在提供更优的性能、更好的 SEO 支持以及无缝的 Vercel 部署体验。
 
-## React Compiler
+### ✨ 核心特性
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **🗺️ 游戏化世界地图**：采用关卡制教学体系，从“初识琴弦”到“大师之路”，每一步成长都清晰可见。
+- **🎯 实时音频互动引擎**：内置高精度音频识别算法，拿起真实吉他进行练习，系统实时监测音符准确性并给予即时反馈。
+- **📚 沉浸式曲谱库**：支持流行、摇滚、民谣等多种风格曲谱。提供**谱面预览**功能及**离线下载**支持。
+- **🛠️ 大师工具箱**：
+  - **调音器 (Tuner)**：高精度实时频率检测。
+  - **节拍器 (Metronome)**：稳定可靠的节奏训练伙伴。
+  - **和弦库 (Chord Chart)**：交互式和弦指法图示，支持点击试听。
+- **📈 进度追踪系统**：自动记录已完成关卡，累积 XP 经验值，见证你的蜕变。
 
-## Expanding the ESLint configuration
+## 🛠️ 技术栈
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **框架**: [Next.js 15 (App Router)](https://nextjs.org/)
+- **语言**: [TypeScript](https://www.typescriptlang.org/)
+- **样式**: [Tailwind CSS](https://tailwindcss.com/)
+- **图标**: [Lucide React](https://lucide.dev/)
+- **内容**: [React Markdown](https://github.com/remarkjs/react-markdown) + [Remark GFM](https://github.com/remarkjs/remark-gfm)
+- **部署**: [Vercel](https://vercel.com/)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 快速开始
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. **克隆项目**
+   ```bash
+   git clone https://github.com/your-repo/guitar-zero-to-master.git
+   cd guitar-zero-to-master
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. **安装依赖**
+   ```bash
+   npm install
+   ```
+
+3. **启动开发服务器**
+   ```bash
+   npm run dev
+   ```
+
+4. **构建生产版本**
+   ```bash
+   npm run build
+   ```
+
+## 📂 目录结构
+
+```text
+src/
+├── app/              # Next.js App Router 页面与路由
+├── components/       # 可复用的 UI 组件（调音器、节拍器、实战模式等）
+├── hooks/            # 自定义 React Hooks（进度管理、音频检测等）
+├── lib/              # 静态数据与工具函数
+├── styles/           # 全局样式配置
+docs/
+└── tutorial/         # Markdown 格式的课程教程内容
+public/
+└── docs/images/      # 教程配套图片资源
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📝 贡献指南
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+我们欢迎任何形式的贡献，无论是修复 Bug、改进 UI 还是增加新的课程内容。
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+愿音乐与你同在！ 🎶
