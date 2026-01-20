@@ -5,7 +5,8 @@
  * 展示可选曲谱列表，支持搜索、分类筛选和难度展示
  */
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { 
   Music, 
   Search, 
@@ -201,10 +202,12 @@ export default function MusicScoresPage() {
             >
               {/* Image Container */}
               <div className="relative h-52 overflow-hidden shrink-0">
-                <img 
+                <Image 
                   src={`${score.image}&w=600&q=80`} 
                   alt={score.title} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                 
@@ -286,8 +289,8 @@ export default function MusicScoresPage() {
               {/* Modal Header */}
               <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl overflow-hidden">
-                    <img src={previewScore.image} alt="" className="w-full h-full object-cover" />
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden relative">
+                    <Image src={previewScore.image} alt="" fill className="object-cover" />
                   </div>
                   <div>
                     <h3 className="text-xl font-black text-slate-900">{previewScore.title}</h3>
@@ -312,21 +315,36 @@ export default function MusicScoresPage() {
                       <p className="text-lg font-serif text-slate-600 mt-2">{previewScore.artist}</p>
                     </div>
                     
-                    {/* Simulated musical notation lines */}
-                    <div className="w-full space-y-16 opacity-20">
-                      {[...Array(6)].map((_, i) => (
-                        <div key={i} className="space-y-3">
-                          {[...Array(6)].map((_, j) => (
-                            <div key={j} className="h-px bg-slate-900 w-full" />
-                          ))}
+                    {/* Simulated musical notation lines with some tab numbers */}
+                    <div className="w-full space-y-16">
+                      {[...Array(3)].map((_, i) => (
+                        <div key={i} className="relative group/line">
+                          <div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col gap-2.5 text-[8px] font-black text-slate-300">
+                            <span>E</span><span>B</span><span>G</span><span>D</span><span>A</span><span>E</span>
+                          </div>
+                          <div className="space-y-3.5">
+                            {[...Array(6)].map((_, j) => (
+                              <div key={j} className="h-px bg-slate-200 w-full relative">
+                                {i === 0 && j === 0 && <span className="absolute left-10 -top-2 bg-white px-1 text-[10px] font-bold text-indigo-600">3</span>}
+                                {i === 0 && j === 0 && <span className="absolute left-20 -top-2 bg-white px-1 text-[10px] font-bold text-indigo-600">5</span>}
+                                {i === 0 && j === 1 && <span className="absolute left-14 -top-2 bg-white px-1 text-[10px] font-bold text-indigo-600">3</span>}
+                                {i === 1 && j === 2 && <span className="absolute left-32 -top-2 bg-white px-1 text-[10px] font-bold text-indigo-600">0</span>}
+                                {i === 1 && j === 3 && <span className="absolute left-40 -top-2 bg-white px-1 text-[10px] font-bold text-indigo-600">2</span>}
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       ))}
                     </div>
 
-                    <div className="mt-20 flex flex-col items-center text-slate-300">
-                      <Music className="w-16 h-16 mb-4" />
-                      <p className="font-bold uppercase tracking-widest text-sm">谱面加载中...</p>
-                      <p className="text-xs mt-2">（演示模式：完整谱面仅供订阅用户查看）</p>
+                    <div className="mt-20 py-10 px-8 bg-indigo-50/50 rounded-3xl border border-indigo-100/50 flex flex-col items-center text-center">
+                      <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-4">
+                        <PlayCircle className="w-6 h-6 text-indigo-600" />
+                      </div>
+                      <p className="font-black uppercase tracking-widest text-xs text-slate-900 mb-2">完整谱面已准备就绪</p>
+                      <p className="text-xs text-slate-500 max-w-xs">
+                        点击下方按钮将谱面保存至本地，即可开启离线练习模式，享受流畅的弹奏体验。
+                      </p>
                     </div>
                   </div>
                 </div>

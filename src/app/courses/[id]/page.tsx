@@ -2,6 +2,7 @@ import { ArrowLeft, BookOpen, Trophy, Sparkles, CheckCircle2, Clock, Target, Sha
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
@@ -78,10 +79,12 @@ export default async function CourseDetailPage({
           <header className="relative p-10 md:p-14 bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl shadow-slate-200 min-h-[320px] flex items-end">
             {/* 封面图背景 */}
             <div className="absolute inset-0 z-0">
-              <img 
+              <Image 
                 src={course.image} 
                 alt={course.title}
-                className="w-full h-full object-cover opacity-40"
+                fill
+                className="object-cover opacity-40"
+                priority
               />
               <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/40 to-transparent" />
             </div>
@@ -129,11 +132,14 @@ export default async function CourseDetailPage({
                       // Next.js 中静态资源路径优化
                       const resolvedSrc = `/docs/images/${fileName}`;
                       return (
-                        <span className="block my-12 group">
-                          <img 
+                        <span className="block my-12 group relative">
+                          <Image 
                             src={resolvedSrc} 
                             alt={alt || ''} 
-                            className="rounded-3xl shadow-2xl border border-slate-100 mx-auto transition-transform duration-700 group-hover:scale-[1.02]"
+                            width={800}
+                            height={450}
+                            className="rounded-3xl shadow-2xl border border-slate-100 mx-auto transition-transform duration-700 group-hover:scale-[1.02] w-auto h-auto"
+                            unoptimized={resolvedSrc.endsWith('.svg')}
                           />
                           {alt && <span className="block text-center text-sm text-slate-400 mt-4 font-medium italic">{alt}</span>}
                         </span>

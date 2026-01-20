@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from 'react';
 import { Mic, MicOff, CheckCircle2, ArrowUp, ArrowDown, RefreshCcw } from 'lucide-react';
 import { usePitchDetector } from '../hooks/usePitchDetector';
@@ -74,7 +73,7 @@ export function PracticeMode({ exercise, courseId, levelId, xpReward }: Practice
         completeLevel(courseId, levelId, xpReward);
       }
     }
-  }, [consecutiveMatches, currentIndex, exercise.notes.length, stopListening]);
+  }, [consecutiveMatches, currentIndex, exercise.notes.length, stopListening, completeLevel, courseId, levelId, xpReward]);
 
   const handleRestart = () => {
     setCurrentIndex(0);

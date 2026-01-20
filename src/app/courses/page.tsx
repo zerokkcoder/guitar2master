@@ -3,6 +3,7 @@
 import { memo } from 'react';
 import { Clock, Trophy, ChevronRight, Star, Target, Map, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { courses, Course } from '@/lib/data';
 import { useProgress } from '@/hooks/useProgress';
 
@@ -66,11 +67,12 @@ const CourseCard = memo(({ course, stars, isLastWorld, completedLessons, totalLe
       <div className="relative bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden group-hover:shadow-lg transition-all duration-300 flex-1 flex flex-col">
         {/* 图片区域 */}
         <div className="h-44 relative overflow-hidden bg-slate-100 shrink-0">
-          <img 
+          <Image 
             src={`${course.image}&w=600&q=75`} 
             alt={course.title} 
-            className="w-full h-full object-cover" 
-            loading="lazy"
+            fill
+            className="object-cover" 
+            sizes="(max-width: 768px) 100vw, 30vw"
           />
           <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-transparent to-transparent" />
           
@@ -124,7 +126,7 @@ CourseCard.displayName = 'CourseCard';
  * 探索地图页面组件
  */
 export default function CoursesPage() {
-  const { totalXP, completedLevels, isLoaded } = useProgress();
+  const { totalXP, completedLevels } = useProgress();
 
   const getDifficultyStars = (level: string) => {
     switch (level) {
