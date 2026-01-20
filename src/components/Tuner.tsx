@@ -1,3 +1,5 @@
+'use client';
+
 import { Mic, MicOff } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { usePitchDetector } from '../hooks/usePitchDetector';

@@ -1,5 +1,8 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Guitar, Map, Wrench, Home, User, Bell } from 'lucide-react';
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Guitar, Map, Wrench, Home, User, Bell, Music } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useState, useEffect } from 'react';
 
@@ -9,7 +12,7 @@ import { useState, useEffect } from 'react';
  * 采用半透明毛玻璃效果和更现代的交互设计
  */
 export function Navbar() {
-  const location = useLocation();
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -23,6 +26,7 @@ export function Navbar() {
   const navItems = [
     { name: '首页', path: '/', icon: Home },
     { name: '探索地图', path: '/courses', icon: Map },
+    { name: '曲谱库', path: '/scores', icon: Music },
     { name: '大师工具', path: '/tools', icon: Wrench },
   ];
 
@@ -37,7 +41,7 @@ export function Navbar() {
         <div className="flex justify-between items-center h-12">
           {/* Logo Area */}
           <div className="flex items-center">
-            <Link to="/" className="shrink-0 flex items-center gap-3 group">
+            <Link href="/" className="shrink-0 flex items-center gap-3 group">
               <div className="w-10 h-10 bg-linear-to-tr from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform">
                 <Guitar className="h-6 w-6 text-white" />
               </div>
@@ -52,11 +56,11 @@ export function Navbar() {
           <div className="hidden sm:flex items-center bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200/50">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.path;
+              const isActive = pathname === item.path;
               return (
                 <Link
                   key={item.path}
-                  to={item.path}
+                  href={item.path}
                   className={cn(
                     'relative flex items-center px-6 py-2 rounded-xl text-sm font-black transition-all duration-300 group',
                     isActive

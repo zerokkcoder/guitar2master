@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { Play, Square, Minus, Plus } from 'lucide-react';
 import { cn } from '../lib/utils';
