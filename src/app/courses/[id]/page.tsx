@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpen, Trophy, Sparkles, CheckCircle2, Layout, Clock, Target, Share2, ChevronRight } from 'lucide-react';
+import { ArrowLeft, BookOpen, Trophy, Sparkles, CheckCircle2, Clock, Target, Share2, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
@@ -124,7 +124,8 @@ export default async function CourseDetailPage({
                   remarkPlugins={[remarkGfm]}
                   components={{
                     img: ({ src, alt }) => {
-                      const fileName = src?.split('/').pop();
+                      if (!src || typeof src !== 'string') return null;
+                      const fileName = src.split('/').pop();
                       // Next.js 中静态资源路径优化
                       const resolvedSrc = `/docs/images/${fileName}`;
                       return (

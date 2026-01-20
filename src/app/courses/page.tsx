@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import { Clock, Trophy, ChevronRight, Star, Target, Map } from 'lucide-react';
 import Link from 'next/link';
-import { courses } from '@/lib/data';
+import { courses, Course } from '@/lib/data';
 
 /**
  * 难度星级组件 - 抽离以减少不必要的重渲染
@@ -29,7 +29,7 @@ DifficultyStars.displayName = 'DifficultyStars';
  * 2. 移除 backdrop-blur
  * 3. 使用 will-change 优化渲染
  */
-const CourseCard = memo(({ course, stars, isLastWorld }: { course: any, stars: number, isLastWorld: boolean }) => (
+const CourseCard = memo(({ course, stars, isLastWorld }: { course: Course, stars: number, isLastWorld: boolean }) => (
   <div className="w-full md:w-[30%] group relative will-change-transform flex flex-col">
     {/* 节点标记 */}
     <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 hidden md:block">
@@ -109,7 +109,7 @@ CourseCard.displayName = 'CourseCard';
  * 探索地图页面组件
  */
 export default function CoursesPage() {
-  const totalXP = courses.reduce((acc, c) => acc + (c.xpReward || 0), 0);
+  const totalXP = courses.reduce((acc: number, c) => acc + (c.xpReward || 0), 0);
 
   const getDifficultyStars = (level: string) => {
     switch (level) {

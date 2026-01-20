@@ -7,6 +7,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "吉他大师 - 从零到大师",
   description: "致力于打造最科学、最有趣的吉他自学平台。通过关卡制教学，带你从零基础成长为吉他大师。",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
